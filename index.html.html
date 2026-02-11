@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>For You ❤️</title>
+  <style>
+    :root{
+      --bg:#f7c7d4;
+      --card:#f4a9be;
+      --card2:#ffd8e3;
+      --text:#2b1b1f;
+      --muted:#6a3b46;
+      --red:#e11d48;
+      --blue:#2563eb;
+      --shadow: 0 18px 40px rgba(0,0,0,.18);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 20% 10%, #ffe7ee 0 18%, transparent 19%),
+        radial-gradient(circle at 85% 20%, #ffe7ee 0 16%, transparent 17%),
+        radial-gradient(circle at 15% 80%, #ffe7ee 0 18%, transparent 19%),
+        radial-gradient(circle at 90% 85%, #ffe7ee 0 16%, transparent 17%),
+        linear-gradient(#fbe0e8, var(--bg));
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    /* floating petals */
+    .petal{
+      position:fixed;
+      top:-10vh;
+      width:10px;height:14px;
+      border-radius:10px 10px 10px 0;
+      transform: rotate(25deg);
+      background: rgba(255,255,255,.65);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.35) inset;
+      pointer-events:none;
+      animation: fall linear infinite;
+      z-index:1;
+    }
+    @keyframes fall{
+      0%{ transform: translate3d(0,0,0) rotate(25deg); opacity:.9;}
+      100%{ transform: translate3d(var(--dx), 120vh, 0) rotate(260deg); opacity:.2;}
+    }
+
+    .wrap{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:32px 14px;
+      position:relative;
+      z-index:2;
+    }
+
+    .card{
+      width:min(820px, 92vw);
+      background: linear-gradient(180deg, #f9b9ca, #f5a7be);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 34px 18px 26px;
+      position:relative;
+      border: 1px solid rgba(255,255,255,.35);
+    }
+
+    .inner{
+      width:min(700px, 100%);
+      margin:0 auto;
+      text-align:center;
+    }
+
+    .top-gif{
+      width:110px;
+      height:110px;
+      margin:0 auto 10px;
+      border-radius:18px;
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      background: rgba(255,255,255,.25);
+      border: 1px solid rgba(255,255,255,.35);
+    }
+    .top-gif img{ width:100%; height:100%; object-fit:cover; }
+
+    h1{
+      margin: 8px 0 8px;
+      font-size: 44px;
+      letter-spacing:.2px;
+      line-height:1.05;
+    }
+    .subtitle{
+      margin:0 auto 18px;
+      max-width: 560px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .btn-row{
+      display:flex;
+      justify-content:center;
+      gap:16px;
+      margin-top: 18px;
+      flex-wrap:wrap;
+    }
+
+    button{
+      border:none;
+      padding: 10px 26px;
+      border-radius: 999px;
+      font-weight: 700;
+      letter-spacing:.4px;
+      cursor:pointer;
+      box-shadow: 0 10px 18px rgba(0,0,0,.15);
+      transition: transform .15s ease, filter .15s ease;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    }
+    button:active{ transform: translateY(1px) scale(.99); }
+
+    .btn-yes{ background: var(--red); color:#fff; }
+    .btn-no{ background: var(--blue); color:#fff; position:relative; }
+
+    .btn-main{
+      background: var(--red);
+      color:#fff;
+      padding: 12px 30px;
+      font-size: 14px;
+      margin-top: 18px;
+    }
+
+    .small{
+      font-size: 12px;
+      color: rgba(0,0,0,.45);
+      margin-top: 14px;
+    }
+
+    /* pages */
+    .page{ display:none; }
+    .page.active{ display:block; }
+
+    /* gifts */
+    .gifts{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 14px;
+    }
+    .gift{
+      background: rgba(255,255,255,.35);
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 16px;
+      padding: 14px 10px 12px;
+      box-shadow: 0 12px 20px rgba(0,0,0,.08);
+      cursor:pointer;
+      transition: transform .18s ease;
+    }
+    .gift:hover{ transform: translateY(-3px); }
+    .gift img{
+      width: 52px;
+      height: 52px;
+      object-fit:cover;
+      border-radius: 14px;
+      display:block;
+      margin: 0 auto 8px;
+    }
+    .gift b{
+      display:block;
+      font-family: ui-sans-serif, system-ui;
+      font-size: 12px;
+      letter-spacing:.3px;
+      color: rgba(0,0,0,.65);
+    }
+
+    /* quiz */
+    .quiz{
+      width:min(520px, 100%);
+      margin: 16px auto 0;
+      background: rgba(255,255,255,.25);
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 16px;
+      padding: 16px;
+      text-align:left;
+    }
+    .qtitle{
+      text-align:center;
+      font-size: 34px;
+      margin: 4px 0 10px;
+    }
+    .qbox{
+      background: rgba(255,255,255,.6);
+      border: 1px solid rgba(0,0,0,.06);
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .qbox p{
+      margin:0 0 10px;
+      font-family: ui-sans-serif, system-ui;
+      font-weight: 800;
+      font-size: 12px;
+      color: rgba(0,0,0,.65);
+      text-align:center;
+    }
+    .answers{
+      display:grid;
+      gap:10px;
+    }
+    .ans{
+      width:100%;
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: #fff;
+      border: 1px solid rgba(0,0,0,.08);
+      box-shadow:none;
+      color:#111;
+      font-weight:800;
+      justify-content:center;
+    }
+    .ans.correct{
+      background: #ef4444;
+      color:#fff;
+      border-color: rgba(0,0,0,.06);
+    }
+
+    .progress{
+      text-align:center;
+      font-family: ui-sans-serif, system-ui;
+      font-size: 12px;
+      font-weight: 800;
+      color: rgba(0,0,0,.55);
+      margin: 8px 0 0;
+    }
+
+    /* letter */
+    .letter{
+      width:min(560px, 100%);
+      margin: 18px auto 0;
+      background: #fff2;
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .paper{
+      background: #f8efe2;
+      border-radius: 10px;
+      padding: 16px 18px;
+      border: 1px solid rgba(0,0,0,.08);
+      box-shadow: 0 10px 16px rgba(0,0,0,.08);
+      text-align:left;
+      font-family: ui-serif, Georgia, serif;
+      font-size: 13px;
+      color:#2b1b1f;
+      line-height:1.5;
+    }
+    .paper .sig{ margin-top:10px; font-weight:700; }
+
+    /* polaroids */
+    .polaroids{
+      width:min(720px, 100%);
+      margin: 18px auto 0;
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 14px;
+    }
+    .pol{
+      background:#fff;
+      border-radius: 12px;
+      padding: 10px 10px 12px;
+      box-shadow: 0 16px 30px rgba(0,0,0,.12);
+      transform: rotate(var(--r));
+      transition: transform .2s ease;
+      position:relative;
+      overflow:hidden;
+    }
+    .pol:hover{ transform: rotate(var(--r)) translateY(-4px); }
+    .pol img{
+      width:100%;
+      aspect-ratio: 4/3;
+      border-radius: 10px;
+      object-fit:cover;
+      display:block;
+      filter: contrast(1.05) saturate(1.05);
+    }
+    .cap{
+      text-align:center;
+      font-family: ui-serif, Georgia, serif;
+      font-size: 13px;
+      margin-top: 8px;
+      color:#2b1b1f;
+      font-weight: 700;
+    }
+
+    /* final */
+    .final-photo{
+      width: 170px;
+      height: 210px;
+      border-radius: 10px;
+      overflow:hidden;
+      margin: 10px auto 10px;
+      background: rgba(255,255,255,.35);
+      border: 1px solid rgba(255,255,255,.35);
+      box-shadow: 0 18px 28px rgba(0,0,0,.12);
+      position:relative;
+      animation: float 3.5s ease-in-out infinite;
+    }
+    .final-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+    @keyframes float{
+      0%,100%{ transform: translateY(0); }
+      50%{ transform: translateY(-10px); }
+    }
+
+    .back{
+      background:#ef4444;
+      color:#fff;
+      padding: 10px 28px;
+      margin-top: 14px;
+    }
+
+    @media (max-width:560px){
+      h1{ font-size: 34px; }
+      .gifts{ grid-template-columns: 1fr; }
+      .polaroids{ grid-template-columns: 1fr; }
+      .card{ padding: 26px 14px 20px; }
+    }
+
+    .heart{
+      position:absolute;
+      width:12px;height:12px;
+      background: #ff6b9a;
+      transform: rotate(45deg);
+      border-radius: 2px;
+      opacity:.55;
+      animation: pop 1.6s ease-in-out infinite;
+    }
+    .heart:before,.heart:after{
+      content:"";
+      position:absolute;
+      width:12px;height:12px;
+      background: #ff6b9a;
+      border-radius:50%;
+    }
+    .heart:before{ left:-6px; top:0; }
+    .heart:after{ top:-6px; left:0; }
+    @keyframes pop{
+      0%,100%{ transform: translateY(0) rotate(45deg) scale(1); }
+      50%{ transform: translateY(-6px) rotate(45deg) scale(1.12); }
+    }
+  </style>
+</head>
+<body>
+
+  <script>
+    const PETALS = 26;
+    for(let i=0;i<PETALS;i++){
+      const p=document.createElement('div');
+      p.className='petal';
+      const left = Math.random()*100;
+      const dur = 8 + Math.random()*10;
+      const delay = Math.random()*-12;
+      const size = 8 + Math.random()*10;
+      const dx = (Math.random()*2-1)*18 + 'vw';
+      p.style.left = left+'vw';
+      p.style.animationDuration = dur+'s';
+      p.style.animationDelay = delay+'s';
+      p.style.width = size+'px';
+      p.style.height = (size*1.3)+'px';
+      p.style.setProperty('--dx', dx);
+      document.body.appendChild(p);
+    }
+  </script>
+
+  <div class="wrap">
+    <div class="card">
+      <div class="heart" style="top:16px; left:18px;"></div>
+      <div class="heart" style="top:26px; right:22px; animation-delay:.4s;"></div>
+      <div class="heart" style="bottom:22px; left:26px; animation-delay:.7s;"></div>
+      <div class="heart" style="bottom:18px; right:18px; animation-delay:.2s;"></div>
+
+      <div class="inner">
+
+        <!-- PAGE 1 -->
+        <section class="page active" id="p1">
+          <div class="top-gif">
+            <img alt="cute gif" src="https://media.tenor.com/JF6wQnZWb7QAAAAi/peach-goma-love-happy-lie-wiggle.gif">
+          </div>
+          <h1>Will you be mine 🥺?</h1>
+          <div class="subtitle">Life is an incredible journey, and I want to spend every single second of it with you.</div>
+
+          <div class="btn-row" style="position:relative; height:60px;">
+            <button class="btn-yes" id="yesBtn">YES</button>
+            <button class="btn-no" id="noBtn">NO</button>
+          </div>
+          <div class="small">Tip: Try pressing “NO” 😭</div>
+        </section>
+
+        <!-- PAGE 2 -->
+        <section class="page" id="p2">
+          <div class="top-gif">
+            <img alt="hug gif" src="https://media1.tenor.com/m/qCrUcEMGsZcAAAAC/peach-goma-goma-peach.gif">
+          </div>
+          <h1>Happy Valentine Day Baby! 🫶</h1>
+          <div class="subtitle">Every second with you is a celebration. You are the spark that makes my world so much brighter.</div>
+          <button class="btn-main" id="openGifts">SEE MY GIFTS ❤️</button>
+        </section>
+
+        <!-- PAGE 3 -->
+        <section class="page" id="p3">
+          <h1>Something for You</h1>
+          <div class="gifts">
+            <div class="gift" data-go="p4">
+              <img src="https://media.tenor.com/PXKZhCEfEfsAAAAi/bubu-bubu-dudu.gif" alt="">
+              <b>Gift 1</b>
+            </div>
+            <div class="gift" data-go="p5">
+              <img src="https://media.tenor.com/sgD-xJYwQDcAAAAi/bear-love-you.gif" alt="">
+              <b>Gift 2</b>
+            </div>
+            <div class="gift" data-go="p6">
+              <img src="https://media.tenor.com/qQmsOJoeMoMAAAAi/dudu-bubu.gif" alt="">
+              <b>Gift 3</b>
+            </div>
+          </div>
+          <button class="back" data-go="p2">BACK</button>
+        </section>
+
+        <!-- PAGE 4: QUIZ -->
+        <section class="page" id="p4">
+          <h1 class="qtitle">Quiz for you 🥰</h1>
+
+          <div class="top-gif" style="width:120px;height:120px;">
+            <img alt="quiz gif" src="https://media.tenor.com/ffG8ZgTeQ74AAAAi/peach-and-goma-cute.gif">
+          </div>
+
+          <div class="quiz">
+            <div class="qbox">
+              <p id="qText">Question will load...</p>
+              <div class="answers" id="answers"></div>
+            </div>
+
+            <div class="progress" id="progress">1 / 5</div>
+
+            <!-- 3 gifs inside quiz -->
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:14px;">
+              <div class="top-gif" style="width:100%; height:92px;">
+                <img alt="gif a" src="https://media1.tenor.com/m/YKECro8tM4sAAAAC/%E3%82%82%E3%81%A1%E3%81%AD%E3%81%93-mochi.gif">
+              </div>
+              <div class="top-gif" style="width:100%; height:92px;">
+                <img alt="gif b" src="https://media1.tenor.com/m/wi-MCce1onsAAAAC/pink-hearts.gif">
+              </div>
+              <div class="top-gif" style="width:100%; height:92px;">
+                <img alt="gif c" src="https://media1.tenor.com/m/K2z5K8HMzXsAAAAC/peach-and-goma-peach.gif">
+              </div>
+            </div>
+          </div>
+
+          <button class="back" data-go="p3">BACK</button>
+        </section>
+
+        <!-- PAGE 5: LETTER -->
+        <section class="page" id="p5">
+          <h1>A Letter For You 🥺</h1>
+
+          <div class="letter">
+            <div class="paper">
+              <div><b>My Baby,</b></div>
+              <div style="margin-top:8px;">
+                Thank you for being my person. I want to hold your hand through every
+                smile, every tear, every silly moment, and every victory.
+                And I love you so so much.
+              </div>
+              <div style="margin-top:10px;">
+                You are my peace and my home, and I’m always thankful for you.
+                No one can replace you in my heart, you’re my one.
+              </div>
+              <div class="sig">Forever yours ❤️</div>
+            </div>
+          </div>
+
+          <button class="back" data-go="p3">BACK</button>
+        </section>
+
+        <!-- PAGE 6: POLAROIDS -->
+        <section class="page" id="p6">
+          <h1>Look at this cutie 😭</h1>
+
+          <div class="polaroids">
+            <div class="pol" style="--r:-4deg;">
+              <img src="c:\Users\Aswathy\Downloads\WhatsApp Image 2026-02-12 at 11.04.33 AM.jpeg" alt="">
+              <div class="cap">Sweet Hello</div>
+            </div>
+            <div class="pol" style="--r:3deg;">
+              <img src="c:\Users\Aswathy\Downloads\WhatsApp Image 2026-02-11 at 3.10.40 PM.jpeg" alt="">
+              <div class="cap">True Smile</div>
+            </div>
+            <div class="pol" style="--r:-2deg;">
+              <img src="c:\Users\Aswathy\Downloads\WhatsApp Image 2026-02-12 at 11.04.29 AM.jpeg" alt="">
+              <div class="cap">Perfect Day</div>
+            </div>
+            <div class="pol" style="--r:2deg;">
+              <img src="c:\Users\Aswathy\Downloads\WhatsApp Image 2026-02-12 at 11.04.28 AM.jpeg" alt="">
+              <div class="cap">Only Us</div>
+            </div>
+            <div class="pol" style="--r:-3deg;">
+              <img src="c:\Users\Aswathy\Downloads\WhatsApp Image 2026-02-11 at 3.10.40 PM (2).jpeg" alt="">
+              <div class="cap">My Home</div>
+            </div>
+            <div class="pol" style="--r:4deg;">
+              <img src="c:\Users\Aswathy\Downloads\WhatsApp Image 2026-01-25 at 4.34.43 PM.jpeg" alt="">
+              <div class="cap">Forever Us</div>
+            </div>
+          </div>
+
+          <button class="back" data-go="p3">BACK</button>
+        </section>
+
+        <!-- PAGE 7: FINAL -->
+        <section class="page" id="p7">
+          <h1>You are my forever 🧿❤️!</h1>
+          <div class="final-photo">
+            <img src="c:\Users\Aswathy\Downloads\WhatsApp Image 2026-01-25 at 4.35.23 PM.jpeg" alt="">
+          </div>
+          <div class="subtitle" style="max-width:620px;">
+            I love you more than words can say. No matter where life takes us, my heart will always choose you.
+            Thank you for being my peace, my smile, my Valentine’s Day and every day after.
+            <br><br>
+            I’m grateful to call you mine ❤️
+          </div>
+          <button class="back" data-go="p3">BACK</button>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const pages = [...document.querySelectorAll('.page')];
+    const go = (id) => {
+      pages.forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo({top:0, behavior:'smooth'});
+    };
+
+    // yes/no logic
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn  = document.getElementById('noBtn');
+
+    const moveNo = () => {
+      const parent = noBtn.parentElement;
+      const rect = parent.getBoundingClientRect();
+      const bw = noBtn.offsetWidth;
+      const bh = noBtn.offsetHeight;
+
+      const x = Math.random() * (rect.width - bw);
+      const y = Math.random() * (rect.height - bh);
+
+      noBtn.style.position = 'absolute';
+      noBtn.style.left = x + 'px';
+      noBtn.style.top  = y + 'px';
+    };
+
+    noBtn.addEventListener('mouseenter', moveNo);
+    noBtn.addEventListener('touchstart', (e)=>{ e.preventDefault(); moveNo(); }, {passive:false});
+    yesBtn.addEventListener('click', ()=>go('p2'));
+    document.getElementById('openGifts').addEventListener('click', ()=>go('p3'));
+
+    document.querySelectorAll('[data-go]').forEach(el=>{
+      el.addEventListener('click', ()=>go(el.dataset.go));
+    });
+
+    /* ===========================
+       QUIZ (5 LOVE QUESTIONS)
+    ============================ */
+    const quiz = [
+      {
+        q: "Who is the absolute boss in this relationship? 😌",
+        a: ["Of course you", "Me", "My Mom"],
+        correct: 0
+      },
+      {
+        q: "What do I love the most about you? 🥺",
+        a: ["Your smile", "Your attitude", "Everything about you"],
+        correct: 2
+      },
+      {
+        q: "If I could choose one place forever, it would be… 💗",
+        a: ["A big house", "In your arms", "A luxury hotel"],
+        correct: 1
+      },
+      {
+        q: "What is my favorite moment with you? 😭",
+        a: ["Every moment", "Only the first day", "Only when we go out"],
+        correct: 0
+      },
+      {
+        q: "Final question 😌💍 — Will you stay with me forever?",
+        a: ["Yes baby ❤️", "Maybe 😭", "No 🙄"],
+        correct: 0
+      }
+    ];
+
+    let qi = 0;
+    const qText = document.getElementById("qText");
+    const answersDiv = document.getElementById("answers");
+    const progress = document.getElementById("progress");
+
+    function loadQuestion(){
+      const item = quiz[qi];
+      qText.textContent = item.q;
+      answersDiv.innerHTML = "";
+      progress.textContent = (qi+1) + " / " + quiz.length;
+
+      item.a.forEach((txt, idx)=>{
+        const btn = document.createElement("button");
+        btn.className = "ans";
+        btn.textContent = txt;
+
+        btn.addEventListener("click", ()=>{
+          // correct answer
+          if(idx === item.correct){
+            btn.classList.add("correct");
+            btn.textContent = "Correct 😌💗";
+
+            setTimeout(()=>{
+              qi++;
+              if(qi >= quiz.length){
+                go("p7"); // after final question -> go to forever page
+              }else{
+                loadQuestion();
+              }
+            }, 650);
+          }
+          else{
+            // wrong -> shake correct button
+            const correctBtn = answersDiv.children[item.correct];
+            correctBtn.animate([
+              {transform:'translateX(0)'},
+              {transform:'translateX(-6px)'},
+              {transform:'translateX(6px)'},
+              {transform:'translateX(0)'}
+            ], {duration:320, easing:'ease-out'});
+          }
+        });
+
+        answersDiv.appendChild(btn);
+      });
+    }
+
+    // load quiz when page opens
+    const oldGo = go;
+    window.go = (id) => {
+      oldGo(id);
+      if(id === "p4"){
+        qi = 0;
+        loadQuestion();
+      }
+    };
+
+    // also load first time (in case user enters quiz directly)
+    loadQuestion();
+  </script>
+</body>
+</html>
